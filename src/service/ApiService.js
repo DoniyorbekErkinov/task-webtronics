@@ -1,93 +1,72 @@
 import axios from "axios";
-import { TokenService } from "@/store/storage.service";
-import AuthService from "./auth.service";
-import router from "@/router";
+import { getItem } from "src/helpers/storage";
+const env = import.meta.env;
 
-const ApiService = {
-  // Stores the 401 interceptor position so that it can be later ejected when needed
-  _401interceptor: null,
-  _requestInterceptor: null,
+function createInstance(baseURL, type) {
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": type,
+  };
 
-  init(baseURL) {
-    axios.defaults.baseURL = baseURL;
-  },
-
-  setHeader() {
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${TokenService.getToken()}`;
-  },
-
-  removeHeader() {
-    axios.defaults.headers.common = {};
-  },
-
-  get(resource) {
-    return axios.get(resource);
-  },
-
-  post(resource, data) {
-    return axios.post(resource, data);
-  },
-
-  postFile(resource, data) {
-    return axios.post(resource, data, {
-      responseType: "blop",
-    });
-  },
-
-  getFile(resource, data) {
-    return axios.get(resource, data, {
-      responseType: "blop",
-    });
-  },
-
-  formatDataFile(resource, data) {
-    return axios.post(resource, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-  },
-
-  put(resource, data) {
-    return axios.put(resource, data);
-  },
-
-  delete(resource) {
-    return axios.delete(resource);
-  },
-  /**
-   * Perform a custom axios request.
-   *
-   * data is an object containing the following properties:
-   *  - method
-   *  - url
-   *  - data ... request payload
-   *  - auth (optional)
-   *    - username
-   *    - password
-   **/
-  customRequest(data) {
-    return axios(data);
-  },
-
-  mount401Interceptor() {
-    let requestCount = 0;
-    const messages = [];
-    this._401interceptor = axios.interceptors.response.use(async (error) => {
-      if (error.request.status === 401) {
-        AuthService.logout();
-        router.push("/login");
+  const axiosInstance = axios.create({ baseURL, headers });
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const isAuthorization = getItem("access");
+      if (isAuthorization && config.headers) {
+        config.headers.Authorization = `Bearer ${isAuthorization || ""}`;
       }
-    });
-  },
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+  axiosInstance.interceptors.response.use(
+    async (res) => res,
+    (error) => {
+      const refreshToken = localStorage.getItem("refreshToken");
+      console.log(error.response?.status);
+      if (error.response?.status === 401 && refreshToken) {
+        axios
+          .post(
+            env.VITE_APP_API_URL + "token/refresh/",
+            { refresh: refreshToken },
+            {
+              headers: {
+                ...headers,
+                authorization: `Bearer ${refreshToken}`,
+              },
+            }
+          )
+          .then((res) => {
+            localStorage.setItem("access", res.data.access);
+            window.location.reload();
+          })
+          .catch((err) => {
+            console.log(err);
 
-  unmount401Interceptor() {
-    // Eject the interceptor
-    axios.interceptors.response.eject(this._401interceptor);
-    axios.interceptors.request.eject(this._requestInterceptor);
-  },
+            localStorage.clear();
+            window.location.reload();
+          });
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return axiosInstance;
+}
+const instance = createInstance(env.VITE_APP_API_URL, "application/json");
+
+export const useGet = ({ url, params }) => {
+  return instance.get(url, { params });
 };
 
-export default ApiService;
+export const usePost = ({ url, data }) => {
+  return instance.post(url, data);
+};
+
+export const useUpdate = ({ url, data }) => {
+  return instance.patch(url, data);
+};
+
+export const useDelete = ({ url, data }) => {
+  return instance.delete(url, { data });
+};

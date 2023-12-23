@@ -1,20 +1,29 @@
 import { defineStore } from "pinia";
-import ApiService from "src/service/ApiService";
+import { usePost } from "src/service/ApiService";
+import { setItem } from "src/helpers/storage";
 export const useUserStore = defineStore("user", {
-  state: () => ({
-    token: localStorage.access || null,
-    storedUser: localStorage.user || null,
-  }),
-  getters: {
-    userIsAuth: () => false,
-    user: (state) => {
-      if (!!state.storedUser) {
-        return JSON.parse(state.storedUser);
-      }
-      return state.storedUser;
-    },
+  state: () => {
+    return {
+      userData: null,
+    };
   },
+  getters: {},
   actions: {
-    async storeLoggedInUser(formData) {},
+    async login(data) {
+      try {
+        return await usePost({ url: "auth/login", data }).then((res) => {
+          this.userData = {
+            id: res.data.id,
+            username: res.data.username,
+            img: res.data.image,
+          };
+          setItem("access", res.data.token);
+          setItem("id", res.data.id);
+          return "success";
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 });

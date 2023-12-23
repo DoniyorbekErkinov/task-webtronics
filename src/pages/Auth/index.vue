@@ -1,12 +1,21 @@
 <script setup>
 import { ref } from "vue";
-const show = ref(false);
+import { useUserStore } from "src/stores/user";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const store = useUserStore();
+const show = ref(true);
 const form = ref({
   username: "kminchelle",
   password: "0lelplR",
 });
 function Login() {
-  console.log(123456789);
+  if (form.value.username && form.value.password) {
+    store.login(form.value).then((res) => {
+      console.log(res);
+      router.push({ path: "/" });
+    });
+  }
 }
 </script>
 <template>
@@ -14,7 +23,7 @@ function Login() {
     <div
       class="w-[450px] h-[450px] border border-slate-200 bg-white rounded-md flex flex-col items-center px-8 py-16"
     >
-      <h2 class="text-[40px] font-semibold">Admiry</h2>
+      <h2 class="text-[40px] font-semibold uppercase">webtronics</h2>
       <h4 class="text-lg font-normal text-gray-600">Sign In</h4>
 
       <form @submit.prevent="Login" class="mt-10 w-full">

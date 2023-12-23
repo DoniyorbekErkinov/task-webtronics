@@ -1,5 +1,6 @@
 const routes = [
   {
+    name: "Dashboard",
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [{ path: "", component: () => import("pages/IndexPage.vue") }],
@@ -7,6 +8,10 @@ const routes = [
   {
     name: "Login",
     path: "/login",
+    meta: {
+      public: true,
+      onlyWhenLoggedOut: true,
+    },
     component: () => import("/src/pages/Auth/index.vue"),
   },
 
