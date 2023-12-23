@@ -3,7 +3,19 @@ const routes = [
     name: "Dashboard",
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/IndexPage.vue") }],
+    children: [
+      { path: "", component: () => import("pages/IndexPage.vue") },
+      {
+        name: "profile",
+        path: "/profile",
+        component: () => import("src/pages/profile/index.vue"),
+      },
+      {
+        name: "tickets",
+        path: "/tickets",
+        component: () => import("src/pages/tickets/index.vue"),
+      },
+    ],
   },
   {
     name: "Login",

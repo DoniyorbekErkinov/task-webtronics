@@ -1,9 +1,11 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <!-- drawer content -->
       <ul>
-        <li v-for="i in 6" :key="i">{{ i + 1 }}</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
       </ul>
     </q-drawer>
 
@@ -13,19 +15,6 @@
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
-
-export default {
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-};
 </script>
