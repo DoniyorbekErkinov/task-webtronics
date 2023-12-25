@@ -13,7 +13,7 @@ function Login() {
   if (form.value.username && form.value.password) {
     store.login(form.value).then((res) => {
       console.log(res);
-      router.push({ path: "/" });
+      router.push({ path: "/tickets" });
     });
   }
 }

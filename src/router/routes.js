@@ -1,19 +1,14 @@
 const routes = [
   {
     name: "Dashboard",
-    path: "/",
+    path: "/tickets",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("pages/IndexPage.vue") },
+      { path: "", component: () => import("pages/tickets/index.vue") },
       {
         name: "profile",
         path: "/profile",
         component: () => import("src/pages/profile/index.vue"),
-      },
-      {
-        name: "tickets",
-        path: "/tickets",
-        component: () => import("src/pages/tickets/index.vue"),
       },
     ],
   },
@@ -32,6 +27,7 @@ const routes = [
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
+    redirect: "/tickets",
   },
 ];
 

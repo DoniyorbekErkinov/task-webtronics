@@ -24,7 +24,7 @@ onMounted(async () => {
       <div
         class="w-full h-auto flex flex-col items-center justify-center mt-12"
       >
-        <router-link to="/" class="text-xl font-semibold uppercase"
+        <router-link to="/tickets" class="text-xl font-semibold uppercase"
           >webtronics</router-link
         >
         <div class="w-2/4 mx-auto mt-10">
