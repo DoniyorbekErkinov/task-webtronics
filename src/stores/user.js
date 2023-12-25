@@ -28,7 +28,7 @@ export const useUserStore = defineStore("user", {
           username: res.data.username,
           img: res.data.image,
           fullName: `${res.data.firstName} ${res.data.lastName}`,
-          birthDate: res.data.birthDate,
+          birthDate: res.data?.birthDate,
           address: res.data.address,
         };
       });
