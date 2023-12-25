@@ -1,10 +1,11 @@
 <script setup>
-import { onMounted, onBeforeMount, ref } from "vue";
+import { onMounted } from "vue";
 import { useTickets } from "src/stores/tickets";
 const ticketStore = useTickets();
-const slides = ref(
-  Array.from({ length: ticketStore.ticketsList.length }, () => 1)
-);
+
+function sliceFunc(text) {
+  return text.length > 60 ? `${text.substr(0, 60)}...` : text;
+}
 onMounted(async () => {
   await ticketStore.getTickets();
 });
@@ -16,26 +17,24 @@ onMounted(async () => {
       class="grid grid-cols-4 gap-4"
     >
       <div
-        class="flex p-0 border border-slate-200 h-[500px] bg-slate-300 rounded-md shadow-lg"
+        class="flex flex-col justify-between p-0 border border-slate-200 h-[500px] bg-slate-300 rounded-md shadow-lg"
         v-for="(ticket, i) in ticketStore.ticketsList"
         :key="i"
       >
-        <q-carousel
-          class="h-[360px] p-0 w-full"
-          v-if="ticket.images.length > 1"
-          animated
-          v-model="slides[i + 1]"
-          control-color="gray"
-          swipeable
-          arrows
-          navigation
-          infinite
+        <div class="flex flex-col">
+          <img class="h-[360px] w-full" :src="ticket.images[0]" />
+          <span class="text-xl font-medium mt-4 ml-2 capitalize">{{
+            ticket.title
+          }}</span>
+          <span class="text-base font-light ml-2">{{
+            sliceFunc(ticket.description)
+          }}</span>
+        </div>
+        <router-link
+          class="text-base mb-2 font-light mt-1 ml-2 text-green-700 underline"
+          to="/"
+          >Learn more</router-link
         >
-          <q-carousel-slide v-for="(img, j) in ticket.images" :key="j" :name="j"
-            ><img class="w-full h-full" :src="img" />
-          </q-carousel-slide>
-        </q-carousel>
-        <img v-else class="h-[360px] w-full" :src="ticket.images[0]" />
       </div>
     </div>
   </div>
