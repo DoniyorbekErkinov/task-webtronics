@@ -32,7 +32,7 @@ onMounted(async () => {
         </div>
         <router-link
           class="text-base mb-2 font-light mt-1 ml-2 text-green-700 underline"
-          to="/"
+          :to="{ name: 'ticket', params: { id: ticket.id } }"
           >Learn more</router-link
         >
       </div>
