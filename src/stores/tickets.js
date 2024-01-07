@@ -4,6 +4,8 @@ export const useTickets = defineStore("tickets", {
   state: () => {
     return {
       ticketsList: [],
+      viewedTickets: [],
+      ticket: {},
       limit: 20,
       page: 0,
       total: 0,
@@ -20,6 +22,23 @@ export const useTickets = defineStore("tickets", {
         this.ticketsList = res.data.products;
         this.total = res.data.total;
       });
+    },
+    async getTicket(id) {
+      console.log(this.viewedTickets);
+      let selectedTicket =
+        this.viewedTickets.length > 0
+          ? this.viewedTickets.filter((el) => el.id == id)[0]
+          : false;
+      if (selectedTicket) {
+        this.ticket = this.viewedTickets.filter((el) => el.id == id)[0];
+      } else {
+        useGet({
+          url: `products/${id}`,
+        }).then((res) => {
+          this.viewedTickets.push(res.data);
+          this.ticket = res.data;
+        });
+      }
     },
   },
 });

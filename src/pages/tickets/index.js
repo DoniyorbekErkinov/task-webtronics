@@ -35,7 +35,7 @@ export function useComposibleTicket() {
       align: "left",
       label: "Description",
       field: "description",
-      format: (val) => sliceFunc(val),
+      format: (val) => sliceFunc(val, 50),
     },
     {
       name: "price",
