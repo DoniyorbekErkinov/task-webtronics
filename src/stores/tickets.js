@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import { usePost, useGet } from "src/service/ApiService";
-import { setItem, getItem } from "src/helpers/storage";
+import { useGet } from "src/service/ApiService";
 export const useTickets = defineStore("tickets", {
   state: () => {
     return {
       ticketsList: [],
       limit: 20,
       page: 0,
+      total: 0,
     };
   },
   getters: {},
@@ -18,6 +18,7 @@ export const useTickets = defineStore("tickets", {
         }`,
       }).then((res) => {
         this.ticketsList = res.data.products;
+        this.total = res.data.total;
       });
     },
   },
